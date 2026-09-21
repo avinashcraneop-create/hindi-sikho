@@ -1,1 +1,10 @@
-
+{
+  "name": "Hindi Sikho",
+  "short_name": "Hindi Sikho",
+  "description": "Apni Language Se Hindi Sikho",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#2563EB",
+  "icons": []
+}
