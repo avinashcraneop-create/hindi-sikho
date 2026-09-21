@@ -137,7 +137,7 @@ function App(){
   const go = s => { setScreen(s); window.scrollTo({top:0,behavior:"smooth"}); };
 
   if(screen==="welcome") return <Welcome onStart={()=>go("language")} />;
-  if(screen==="language") return <Language onNext={()=>go("level")} />;
+  if(screen==="language") return <Language onNext={v=>{update({sourceLanguage:v});go("level")}} />;
   if(screen==="level") return <Level onNext={v=>{update({level:v});go("goal")}} />;
   if(screen==="goal") return <Goal onNext={v=>{update({goal:v});go("profileSetup")}} />;
   if(screen==="profileSetup") return <ProfileSetup onNext={name=>{update({name:name||"Learner"});go("home")}} />;
@@ -172,7 +172,36 @@ function Welcome({onStart}){ return <div className="onboard">
   <small className="muted">Phase 1 • English → Hindi</small>
 </div> }
 
-function Language({onNext}){ return <div className="onboard"><div className="step">1 / 3</div><h1>Choose your language</h1><p className="muted">आप किस language से Hindi सीखना चाहते हैं?</p><button className="lang selected"><span>🇬🇧</span><div><b>English</b><small>English → Hindi</small></div><Check/></button><button className="lang disabled"><span>🌍</span><div><b>More languages</b><small>Coming Soon</small></div><Lock/></button><button className="primary wide" onClick={onNext}>Continue <ChevronRight/></button></div>}
+function Language({onNext}){
+  const options = [
+    ["🇬🇧","English","English → Hindi"],
+    ["🇦🇪","Arabic","Arabic → Hindi"],
+    ["🇫🇷","French","French → Hindi"],
+    ["🇪🇸","Spanish","Spanish → Hindi"],
+    ["🇩🇪","German","German → Hindi"],
+    ["🇯🇵","Japanese","Japanese → Hindi"],
+    ["🇰🇷","Korean","Korean → Hindi"],
+    ["🇨🇳","Chinese","Chinese → Hindi"]
+  ];
+  const [selected,setSelected] = useState("English");
+
+  return <div className="onboard">
+    <div className="step">1 / 3</div>
+    <h1>Choose your language</h1>
+    <p className="muted">आप किस language से Hindi सीखना चाहते हैं?</p>
+    <div className="language-list">
+      {options.map(([flag,name,sub]) =>
+        <button key={name} className={"lang "+(selected===name?"selected":"")} onClick={()=>setSelected(name)}>
+          <span>{flag}</span>
+          <div><b>{name}</b><small>{sub}</small></div>
+          {selected===name ? <Check/> : null}
+        </button>
+      )}
+    </div>
+    <p className="muted small center">Language options unlocked. Current Phase 1 lesson content is English → Hindi.</p>
+    <button className="primary wide" onClick={()=>onNext(selected)}>Continue <ChevronRight/></button>
+  </div>
+}
 
 function Level({onNext}){ const [v,setV]=useState("Beginner"); return <div className="onboard"><div className="step">2 / 3</div><h1>Your Hindi level?</h1><p className="muted">अपने current level के अनुसार course चुनें।</p>{["Beginner","Intermediate","Advanced"].map(x=><button key={x} className={"choice "+(v===x?"selected":"")} onClick={()=>setV(x)}><div><b>{x}</b><small>{x==="Beginner"?"बिल्कुल शुरुआत से":x==="Intermediate"?"थोड़ी Hindi आती है":"Hindi अच्छी तरह आती है"}</small></div>{v===x&&<Check/>}</button>)}<button className="primary wide" onClick={()=>onNext(v)}>Continue <ChevronRight/></button></div>}
 
